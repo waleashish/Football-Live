@@ -1,12 +1,12 @@
 import http.client
-import api.connection_constants as connection_constants
+import src.constants.constants as constants
 
 from abc import ABC, abstractmethod
 
 class Connector:
     def __init__(self, config) -> None:
         match config:
-            case connection_constants.FOOTBALL:
+            case constants.FOOTBALL:
                 self.connection = Connection_Football()
 
     def connect(self):
@@ -32,4 +32,4 @@ class Connection(ABC):
     
 class Connection_Football(Connection):
     def create_connection(self):
-        return http.client.HTTPSConnection(connection_constants.FOOTBALL_API)
+        return http.client.HTTPSConnection(constants.FOOTBALL_API)

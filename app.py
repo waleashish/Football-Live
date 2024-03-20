@@ -1,16 +1,12 @@
-import json
+import streamlit as st
 
+import src.etl.bigquery.standings_to_bigquery as standings
+import src.constants.constants as constants
 from dotenv import load_dotenv
-from api.football import Football
 
 def app():
-  load_dotenv()
-  football = Football()
-  matches = football.fetch_pl_matches()
-  d = json.loads(matches)
-  print(type(d))
-  print(matches)
-
+  load_dotenv(dotenv_path=constants.DOTENV_PATH)
+  standings.start_pipeline()
 
 if __name__=="__main__":
   app()
