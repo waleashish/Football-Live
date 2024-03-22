@@ -1,6 +1,6 @@
 import os
 
-from src.api.connector import Connector
+from .connector import Connector
 import src.constants.constants as constants
 import requests
 

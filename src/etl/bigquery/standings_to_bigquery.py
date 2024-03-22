@@ -1,3 +1,8 @@
+"""
+    Load data into bigquery. This should be done every once a week to regularly update the matchday
+    standings. On any off weekend matchday, we should have a trigger to start the pipeline to update the
+    standings for an updated table.
+"""
 import os
 
 import requests
