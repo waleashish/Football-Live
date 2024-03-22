@@ -8,12 +8,13 @@ from dotenv import load_dotenv
 def app():
   load_dotenv(dotenv_path=constants.DOTENV_PATH)
   # Load data into bigquery.
-  standings.start_pipeline()
+  # standings.start_pipeline()
   # Get standings from bigquery
   df = get_standings()
   # Display the standings as a table
   st.dataframe(
-    data=df
+    data=df,
+    hide_index=True
   )
 
 if __name__=="__main__":
