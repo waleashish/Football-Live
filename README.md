@@ -2,6 +2,10 @@
 Live football updates application
 
 ## Streamlit in docker
+Prerequisites:
+
+Add files named `.env` and `credentials.json` at /config/ directory. The files contain authorization information needed to run streamlit. Please take a look at sample files provided at the mentioned location.
+
 To build the application:
 ```shell
 docker build -t football-live .
