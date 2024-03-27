@@ -10,4 +10,8 @@ RUN pip install streamlit
 
 COPY . /app/
 
+COPY ./src/ /app/src/
+COPY ./config/ /app/config/
+COPY app.py /app/
+
 ENTRYPOINT [ "streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0", "--theme.primaryColor=indigo" ]
