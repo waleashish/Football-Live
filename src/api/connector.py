@@ -1,5 +1,5 @@
 import http.client
-import src.constants.constants as constants
+import src.utils.constants.constants as constants
 
 from abc import ABC, abstractmethod
 

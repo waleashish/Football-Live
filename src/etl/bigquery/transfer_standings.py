@@ -7,9 +7,10 @@ import os
 
 import requests
 import pandas_gbq
-import src.constants.constants as constants
+import src.utils.constants.constants as constants
 from pandas import DataFrame
 from google.oauth2 import service_account
+from dotenv import load_dotenv
 
 def fetch_api():
     url = "http://api.football-data.org/v4/competitions/PL/standings"
@@ -51,9 +52,9 @@ def fetch_api():
         draws_list,
         losses_list,
         points_list,
+        goal_difference_list,
         goals_for_list,
-        goals_against_list,
-        goal_difference_list
+        goals_against_list
     )
 
 
@@ -67,9 +68,9 @@ def create_dataframe() -> DataFrame:
         draws_list,
         losses_list,
         points_list,
+        goal_difference_list,
         goals_for_list,
-        goals_against_list,
-        goal_difference_list
+        goals_against_list
     ) = fetch_api()
 
     headers = [
@@ -80,9 +81,9 @@ def create_dataframe() -> DataFrame:
         "draws",
         "losses",
         "points",
+        "goal_difference",
         "goals_for",
-        "goals_against",
-        "goal_difference"
+        "goals_against"
     ]
 
     data_zipped = zip(
@@ -93,15 +94,15 @@ def create_dataframe() -> DataFrame:
         draws_list,
         losses_list,
         points_list,
+        goal_difference_list,
         goals_for_list,
-        goals_against_list,
-        goal_difference_list
+        goals_against_list
     )
 
     df = DataFrame(data_zipped, columns=headers)
     return df
 
-def define_table_schema() -> list[dict[str, str]]:
+def define_table_schema():
     schema_definition = [
 		{"name": "position", "type": "INTEGER"},
 		{"name": "team", "type": "STRING"},
@@ -110,9 +111,9 @@ def define_table_schema() -> list[dict[str, str]]:
 		{"name": "draws", "type": "INTEGER"},
 		{"name": "loses", "type": "INTEGER"},
 		{"name": "points", "type": "INTEGER"},
+        {"name": "goal_difference", "type": "INTEGER"},
 		{"name": "goals_for", "type": "INTEGER"},
 		{"name": "goals_against", "type": "INTEGER"},
-		{"name": "goal_difference", "type": "INTEGER"},
 	]
 
     return schema_definition
@@ -134,6 +135,7 @@ def add_standings_data_to_bigquery(dataframe, schema) -> None:
     
 
 def start_pipeline():
+    load_dotenv(dotenv_path=constants.DOTENV_PATH)
     print(f"Starting ETL pipeline ...")
     dataframe = create_dataframe()
     schema = define_table_schema()

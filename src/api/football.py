@@ -1,7 +1,7 @@
 import os
 
 from .connector import Connector
-import src.constants.constants as constants
+import src.utils.constants.constants as constants
 import requests
 
 class Football:

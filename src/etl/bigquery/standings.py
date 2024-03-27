@@ -1,17 +1,19 @@
 """
     Here, we will load the standings data present in our bigquery, load it into a dataframe then show the
     dataframe as a table on our streamlit application.
+
+    TODO: We need to orchestrate this script so it in every 7 days to get the updated standings
 """
 import os
 
 import pandas_gbq
 from pandas import DataFrame
-import src.constants.constants as constants
+import src.utils.constants.constants as constants
 from google.oauth2 import service_account
 
 def fetch_from_bq() -> DataFrame:
     query = """
-                SELECT position, team, games_played, wins, draws, losses, points, goals_for, goals_against, goal_difference
+                SELECT position, team, games_played, wins, draws, losses, points, goal_difference, goals_for, goals_against
                 from bigquery_dataset1.standings
                 order by position ASC
             """
