@@ -11,11 +11,21 @@ from pandas import DataFrame
 import src.utils.constants.constants as constants
 from google.oauth2 import service_account
 
-def fetch_from_bq() -> DataFrame:
+def __fetch_from_bq() -> DataFrame:
     query = """
-                SELECT position, team, games_played, wins, draws, losses, points, goal_difference, goals_for, goals_against
-                from bigquery_dataset1.standings
-                order by position ASC
+                SELECT 
+                position AS Rank,
+                team AS Team,
+                games_played AS Matches,
+                wins AS Win,
+                losses AS Lose,
+                draws AS Draw,
+                points AS Points,
+                goal_difference AS GD,
+                goals_for AS GF,
+                goals_against AS GA
+                FROM bigquery_dataset1.standings
+                ORDER BY Rank ASC
             """
     credentials = service_account.Credentials.from_service_account_file(
         constants.CREDENTIALS_PATH
@@ -30,4 +40,4 @@ def fetch_from_bq() -> DataFrame:
     return df
 
 def get_standings() -> DataFrame:
-    return fetch_from_bq()
+    return __fetch_from_bq()
