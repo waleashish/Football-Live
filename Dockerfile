@@ -8,8 +8,6 @@ RUN pip install pandas-gbq
 RUN pip install tqdm
 RUN pip install streamlit
 
-COPY . /app/
-
 COPY ./src/ /app/src/
 COPY ./config/ /app/config/
 COPY app.py /app/
