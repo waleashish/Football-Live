@@ -8,14 +8,14 @@ from google.oauth2 import service_account
 def __fetch_from_bq() -> DataFrame:
     query = """
                 SELECT
-                name AS Name,
-                team AS Team,
-                goals AS Goals,
-                assists AS Assists,
-                matches_played AS Matches,
-                nationality AS Nationality
+                name,
+                team,
+                goals,
+                assists,
+                matches_played,
+                nationality
                 FROM bigquery_dataset1.top_scorers
-                ORDER BY Goals DESC
+                ORDER BY goals DESC
             """
     
     credentials = service_account.Credentials.from_service_account_file(

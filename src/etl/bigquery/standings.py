@@ -14,18 +14,20 @@ from google.oauth2 import service_account
 def __fetch_from_bq() -> DataFrame:
     query = """
                 SELECT 
-                position AS Rank,
-                team AS Team,
-                games_played AS Matches,
-                wins AS Win,
-                losses AS Lose,
-                draws AS Draw,
-                points AS Points,
-                goal_difference AS GD,
-                goals_for AS GF,
-                goals_against AS GA
-                FROM bigquery_dataset1.standings
-                ORDER BY Rank ASC
+                position,
+                crest,
+                team,
+                games_played,
+                wins,
+                losses,
+                draws,
+                points,
+                goal_difference,
+                goals_for,
+                goals_against
+                FROM bigquery_dataset1.standings INNER JOIN bigquery_dataset1.teams
+                ON bigquery_dataset1.standings.team = bigquery_dataset1.teams.short_name
+                ORDER BY position ASC
             """
     credentials = service_account.Credentials.from_service_account_file(
         constants.CREDENTIALS_PATH
