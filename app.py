@@ -58,11 +58,20 @@ def app():
   # Display header
   st.header("Football Live")
 
-  # Display current standings
-  display_standings()
+  # Create tabs
+  tab1, tab2, tab3 = st.tabs(["Standings", "Top Scorers", "Matchday"])
+
+  with tab1:
+    # Display current standings
+    display_standings()
+
+  with tab2:
+    # Display current top scorers
+    display_top_scorers()
+  with tab3:
+    pass
+
   
-  # Display current top scorers
-  display_top_scorers()
 
 if __name__=="__main__":
   app()
