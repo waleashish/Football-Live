@@ -7,7 +7,7 @@ from src.utils.constants import constants
 def __fetch_from_bq():
     query = f"""
                 SELECT * FROM 
-                (SELECT matchday, short_name AS home_team_name, crest, score, away_team
+                (SELECT matchday, short_name AS home_team_name, crest, full_time_score, half_time_score, away_team
                 FROM bigquery_dataset1.fixtures as fix INNER JOIN bigquery_dataset1.teams AS teams
                 ON fix.home_team = teams.short_name
                 ORDER BY matchday DESC) AS one
