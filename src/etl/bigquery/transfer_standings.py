@@ -12,7 +12,7 @@ from pandas import DataFrame
 from google.oauth2 import service_account
 from dotenv import load_dotenv
 
-def fetch_api():
+def __fetch_api():
     url = "http://api.football-data.org/v4/competitions/PL/standings"
     payload = {}
     headers = {
@@ -58,7 +58,7 @@ def fetch_api():
     )
 
 
-def create_dataframe() -> DataFrame:
+def __create_dataframe() -> DataFrame:
     print(f"Fetching Data from Football API ...")
     (
         positions,
@@ -71,7 +71,7 @@ def create_dataframe() -> DataFrame:
         goal_difference_list,
         goals_for_list,
         goals_against_list
-    ) = fetch_api()
+    ) = __fetch_api()
 
     headers = [
         "position",
@@ -102,7 +102,7 @@ def create_dataframe() -> DataFrame:
     df = DataFrame(data_zipped, columns=headers)
     return df
 
-def define_table_schema():
+def __define_table_schema():
     schema_definition = [
 		{"name": "position", "type": "INTEGER"},
 		{"name": "team", "type": "STRING"},
@@ -119,7 +119,7 @@ def define_table_schema():
     return schema_definition
 
 
-def add_standings_data_to_bigquery(dataframe, schema) -> None:
+def __add_standings_data_to_bigquery(dataframe, schema) -> None:
     credentials = service_account.Credentials.from_service_account_file(
         constants.CREDENTIALS_PATH
     )
@@ -137,8 +137,8 @@ def add_standings_data_to_bigquery(dataframe, schema) -> None:
 def start_pipeline():
     load_dotenv(dotenv_path=constants.DOTENV_PATH)
     print(f"Starting ETL pipeline ...")
-    dataframe = create_dataframe()
-    schema = define_table_schema()
+    dataframe = __create_dataframe()
+    schema = __define_table_schema()
     print(f"Adding data to BigQuery ...")
-    add_standings_data_to_bigquery(dataframe, schema)
+    __add_standings_data_to_bigquery(dataframe, schema)
     print(f"Addition complete")

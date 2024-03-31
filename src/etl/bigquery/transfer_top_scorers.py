@@ -8,7 +8,7 @@ from google.oauth2 import service_account
 from dotenv import load_dotenv
 
 
-def fetch_api():
+def __fetch_api():
     url = "http://api.football-data.org/v4/competitions/PL/scorers"
     payload = {}
     headers = {
@@ -43,7 +43,7 @@ def fetch_api():
         nationality_list
     )
 
-def create_dataframe() -> DataFrame:
+def __create_dataframe() -> DataFrame:
     (
         names_list,
         teams_list,
@@ -51,7 +51,7 @@ def create_dataframe() -> DataFrame:
         assists_list,
         matches_played,
         nationality_list
-    ) = fetch_api()
+    ) = __fetch_api()
 
     headers = [
         "name",
@@ -75,7 +75,7 @@ def create_dataframe() -> DataFrame:
 
     return df
 
-def define_table_schema():
+def __define_table_schema():
     schema_definition = [
         {"name": "name", "type": "STRING"},
         {"name": "team", "type": "STRING"},
@@ -87,7 +87,7 @@ def define_table_schema():
 
     return schema_definition
 
-def add_standings_data_to_bigquery(dataframe, schema) -> None:
+def __add_top_scorers_data_to_bigquery(dataframe, schema) -> None:
     credentials = service_account.Credentials.from_service_account_file(
         constants.CREDENTIALS_PATH
     )
@@ -105,8 +105,8 @@ def start_pipeline():
     print("Fetching top scorer data from api ...")
     load_dotenv(dotenv_path=constants.DOTENV_PATH)
     print(f"Starting ETL pipeline ...")
-    dataframe = create_dataframe()
-    schema = define_table_schema()
+    dataframe = __create_dataframe()
+    schema = __define_table_schema()
     print(f"Adding top scorers data to BigQuery ...")
-    add_standings_data_to_bigquery(dataframe, schema)
+    __add_top_scorers_data_to_bigquery(dataframe, schema)
     print(f"Addition complete")
