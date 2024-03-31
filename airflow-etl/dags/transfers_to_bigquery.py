@@ -1,7 +1,7 @@
 from airflow.models.dag import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
-from src.etl.bigquery import transfer_standings, transfer_top_scorers
+from src.etl.bigquery import transfer_standings, transfer_top_scorers, transfer_fixtures
 
 default_args = {
     "owner" : "Ashish Wale",
@@ -26,4 +26,9 @@ with DAG(
         python_callable=transfer_top_scorers.start_pipeline
     )
 
-    [task1, task2]
+    task_3 = PythonOperator(
+        task_id="tak_fixtures_to_gbq",
+        python_callable=transfer_fixtures.start_pipeline
+    )
+
+    [task1, task2, task_3]
