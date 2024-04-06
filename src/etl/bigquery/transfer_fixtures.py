@@ -104,7 +104,7 @@ def __add_fixtures_data_to_bigquery(dataframe, schema) -> None:
 
     pandas_gbq.to_gbq(
         dataframe=dataframe,
-        destination_table="bigquery_dataset1.fixtures",
+        destination_table="footballapp.fixtures",
         if_exists="replace",
         table_schema=schema,
         project_id=os.getenv(constants.GCLOUD_PROJECT),

@@ -126,7 +126,7 @@ def __add_standings_data_to_bigquery(dataframe, schema) -> None:
 
     pandas_gbq.to_gbq(
         dataframe=dataframe,
-        destination_table="bigquery_dataset1.standings",
+        destination_table="footballapp.standings",
         if_exists="replace",
         table_schema=schema,
         project_id=os.getenv(constants.GCLOUD_PROJECT),
@@ -139,6 +139,6 @@ def start_pipeline():
     print(f"Starting ETL pipeline ...")
     dataframe = __create_dataframe()
     schema = __define_table_schema()
-    print(f"Adding data to BigQuery ...")
+    print(f"Adding standings data to BigQuery ...")
     __add_standings_data_to_bigquery(dataframe, schema)
     print(f"Addition complete")

@@ -8,12 +8,12 @@ def __fetch_from_bq():
     query = f"""
                 SELECT * FROM 
                 (SELECT matchday, short_name AS home_team_name, crest, full_time_score, half_time_score, away_team
-                FROM bigquery_dataset1.fixtures as fix INNER JOIN bigquery_dataset1.teams AS teams
+                FROM footballapp.fixtures as fix INNER JOIN footballapp.teams AS teams
                 ON fix.home_team = teams.short_name
                 ORDER BY matchday DESC) AS one
                 INNER JOIN
                 (SELECT matchday, short_name as away_team_name, crest
-                FROM bigquery_dataset1.fixtures AS fix INNER JOIN bigquery_dataset1.teams AS teams
+                FROM footballapp.fixtures AS fix INNER JOIN footballapp.teams AS teams
                 ON fix.away_team = teams.short_name
                 ORDER BY matchday DESC) AS two
                 ON one.matchday = two.matchday AND one.away_team = two.away_team_name;

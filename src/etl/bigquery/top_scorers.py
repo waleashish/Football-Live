@@ -14,7 +14,7 @@ def __fetch_from_bq() -> DataFrame:
                 assists,
                 matches_played,
                 nationality
-                FROM bigquery_dataset1.top_scorers
+                FROM footballapp.top_scorers
                 ORDER BY goals DESC
             """
     

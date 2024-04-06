@@ -91,11 +91,10 @@ def __add_standings_data_to_bigquery(dataframe, schema) -> None:
         project_id=os.getenv(constants.GCLOUD_PROJECT),
         table_schema=schema,
         if_exists="replace",
-        destination_table="bigquery_dataset1.teams"
+        destination_table="footballapp.teams"
     )
 
 def start_pipeline():
-    print("Fetching teams data from api ...")
     load_dotenv(dotenv_path=constants.DOTENV_PATH)
     print(f"Starting ETL pipeline ...")
     dataframe = __create_dataframe()

@@ -25,8 +25,8 @@ def __fetch_from_bq() -> DataFrame:
                 goal_difference,
                 goals_for,
                 goals_against
-                FROM bigquery_dataset1.standings INNER JOIN bigquery_dataset1.teams
-                ON bigquery_dataset1.standings.team = bigquery_dataset1.teams.short_name
+                FROM footballapp.standings as standings INNER JOIN footballapp.teams as teams
+                ON standings.team = teams.short_name
                 ORDER BY position ASC
             """
     credentials = service_account.Credentials.from_service_account_file(

@@ -98,11 +98,10 @@ def __add_top_scorers_data_to_bigquery(dataframe, schema) -> None:
         project_id=os.getenv(constants.GCLOUD_PROJECT),
         table_schema=schema,
         if_exists="replace",
-        destination_table="bigquery_dataset1.top_scorers"
+        destination_table="footballapp.top_scorers"
     )
 
 def start_pipeline():
-    print("Fetching top scorer data from api ...")
     load_dotenv(dotenv_path=constants.DOTENV_PATH)
     print(f"Starting ETL pipeline ...")
     dataframe = __create_dataframe()
