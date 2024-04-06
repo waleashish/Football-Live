@@ -2,6 +2,7 @@ import streamlit as st
 
 from src.etl.bigquery.standings import get_standings
 from src.etl.bigquery.top_scorers import get_top_scorers
+from src.ui.fixtures import handle_fixture_display
 from src.utils.constants import constants
 from dotenv import load_dotenv
 
@@ -48,6 +49,9 @@ def display_top_scorers():
     hide_index=True
   )
 
+def display_fixtures():
+  handle_fixture_display()
+
 def app():
   st.set_page_config(
     page_title="Football Live",
@@ -59,7 +63,7 @@ def app():
   st.header("Football Live")
 
   # Create tabs
-  tab1, tab2, tab3 = st.tabs(["Standings", "Top Scorers", "Matchday"])
+  tab1, tab2, tab3 = st.tabs(["Standings", "Top Scorers", "Fixtures"])
 
   with tab1:
     # Display current standings
@@ -69,9 +73,8 @@ def app():
     # Display current top scorers
     display_top_scorers()
   with tab3:
-    pass
-
-  
+    # Display the fixtures matchday-wise
+    display_fixtures()
 
 if __name__=="__main__":
   app()
