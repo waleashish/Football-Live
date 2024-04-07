@@ -97,15 +97,16 @@ def __add_standings_data_to_bigquery(dataframe, schema) -> None:
         credentials=credentials,
         project_id=os.getenv(constants.GCLOUD_PROJECT),
         table_schema=schema,
-        if_exists="replace",
+        if_exists="append",
         destination_table="footballapp.teams"
     )
 
-def start_pipeline(competition):
+def start_pipeline(competitions):
     load_dotenv(dotenv_path=constants.DOTENV_PATH)
     print(f"Starting ETL pipeline ...")
-    dataframe = __create_dataframe(competition)
-    schema = __define_table_schema()
-    print(f"Adding teams data to BigQuery ...")
-    __add_standings_data_to_bigquery(dataframe, schema)
+    for competition in competitions:
+        dataframe = __create_dataframe(competition)
+        schema = __define_table_schema()
+        print(f"Adding teams data to BigQuery ...")
+        __add_standings_data_to_bigquery(dataframe, schema)
     print(f"Addition complete")

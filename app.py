@@ -3,7 +3,7 @@ import streamlit as st
 from src.etl.bigquery.standings import get_standings
 from src.etl.bigquery.top_scorers import get_top_scorers
 from src.ui.fixtures import handle_fixture_display
-from src.utils.constants import constants, league_name_constants
+from src.utils.constants import constants
 from dotenv import load_dotenv
 
 def display_standings(competition):
@@ -62,19 +62,27 @@ def app():
   # Display header
   st.header("Football Live")
 
+  # Create dropdown to select competition
+  option = st.selectbox(
+    'Competition',
+    options=constants.TEAM_DROPDOWN_LIST.keys())
+  
+  render_app(option)
+  
+def render_app(option):
   # Create tabs
   tab1, tab2, tab3 = st.tabs(["Standings", "Top Scorers", "Fixtures"])
+  if option != "Select":
+    with tab1:
+      # Display current standings
+      display_standings(constants.TEAM_DROPDOWN_LIST[option])
 
-  with tab1:
-    # Display current standings
-    display_standings(league_name_constants.PREMIER_LEAGUE)
-
-  with tab2:
-    # Display current top scorers
-    display_top_scorers(league_name_constants.PREMIER_LEAGUE)
-  with tab3:
-    # Display the fixtures matchday-wise
-    display_fixtures(league_name_constants.PREMIER_LEAGUE)
+    with tab2:
+      # Display current top scorers
+      display_top_scorers(constants.TEAM_DROPDOWN_LIST[option])
+    with tab3:
+      # Display the fixtures matchday-wise
+      display_fixtures(constants.TEAM_DROPDOWN_LIST[option])
 
 if __name__=="__main__":
   app()

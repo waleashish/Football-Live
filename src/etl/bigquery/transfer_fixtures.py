@@ -105,17 +105,18 @@ def __add_fixtures_data_to_bigquery(dataframe, schema) -> None:
     pandas_gbq.to_gbq(
         dataframe=dataframe,
         destination_table="footballapp.fixtures",
-        if_exists="replace",
+        if_exists="append",
         table_schema=schema,
         project_id=os.getenv(constants.GCLOUD_PROJECT),
         credentials=credentials
     )
 
-def start_pipeline(competition):
+def start_pipeline(competitions):
     load_dotenv(dotenv_path=constants.DOTENV_PATH)
     print(f"Starting ETL pipeline ...")
-    dataframe = __create_dataframe(competition)
-    schema = __define_table_schema()
-    print(f"Adding fixtures data to BigQuery ...")
-    __add_fixtures_data_to_bigquery(dataframe, schema)
+    for competition in competitions:
+        dataframe = __create_dataframe(competition)
+        schema = __define_table_schema()
+        print(f"Adding fixtures data to BigQuery ...")
+        __add_fixtures_data_to_bigquery(dataframe, schema)
     print(f"Addition complete")

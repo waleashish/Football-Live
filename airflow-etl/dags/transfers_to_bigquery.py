@@ -1,7 +1,8 @@
 from airflow.models.dag import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
-from src.etl.bigquery import transfer_standings, transfer_top_scorers, transfer_fixtures
+from src.etl.bigquery import transfer_standings, transfer_top_scorers, transfer_fixtures, transfer_teams
+from src.utils.constants import league_name_constants
 
 default_args = {
     "owner" : "Ashish Wale",
@@ -10,25 +11,58 @@ default_args = {
 }
 
 with DAG(
-    dag_id="dag_standings_to_gbq",
-    description="Orchestrates the daily standings data of premier league teams into google big query.",
-    start_date=datetime(2024, 3, 23, 0, 17),
+    dag_id="dag_transfers_to_gbq",
+    description="Orchestrates the daily data transfer of football top five leagues into google big query.",
+    start_date=datetime(2024, 4, 6, 0, 17),
     schedule_interval="@daily",
     default_args=default_args
 ) as dag:
-    task1 = PythonOperator(
-        task_id="task_standings_to_gbq",
-        python_callable=transfer_standings.start_pipeline
+    task_1 = PythonOperator(
+        task_id="task_teams_to_gbq",
+        python_callable=transfer_teams.start_pipeline,
+        op_args=[
+            [
+                league_name_constants.PREMIER_LEAGUE,
+                league_name_constants.LA_LIGA,
+                league_name_constants.SERIE_A
+            ]
+        ]
     )
-
-    task2 = PythonOperator(
-        task_id="task_top_scorers_to_gbq",
-        python_callable=transfer_top_scorers.start_pipeline
+    task_2 = PythonOperator(
+        task_id="task_standings_to_gbq",
+        python_callable=transfer_standings.start_pipeline,
+        op_args=[
+            [
+                league_name_constants.PREMIER_LEAGUE,
+                league_name_constants.LA_LIGA,
+                league_name_constants.SERIE_A
+            ]
+        ]
     )
 
     task_3 = PythonOperator(
-        task_id="tak_fixtures_to_gbq",
-        python_callable=transfer_fixtures.start_pipeline
+        task_id="task_top_scorers_to_gbq",
+        python_callable=transfer_top_scorers.start_pipeline,
+        op_args=[
+            [
+                league_name_constants.PREMIER_LEAGUE,
+                league_name_constants.LA_LIGA,
+                league_name_constants.SERIE_A
+            ]
+        ]
     )
 
-    [task1, task2, task_3]
+    task_4 = PythonOperator(
+        task_id="task_fixtures_to_gbq",
+        python_callable=transfer_fixtures.start_pipeline,
+        op_args=[
+            [
+                league_name_constants.PREMIER_LEAGUE,
+                league_name_constants.LA_LIGA,
+                league_name_constants.SERIE_A
+            ]
+        ]
+    )
+
+
+    task_1 >> [task_2, task_3] >> task_4
