@@ -3,13 +3,13 @@ import streamlit as st
 from src.etl.bigquery.standings import get_standings
 from src.etl.bigquery.top_scorers import get_top_scorers
 from src.ui.fixtures import handle_fixture_display
-from src.utils.constants import constants
+from src.utils.constants import constants, league_name_constants
 from dotenv import load_dotenv
 
-def display_standings():
+def display_standings(competition):
   st.markdown("Current Standings")
   # Get standings from bigquery
-  standings = get_standings()
+  standings = get_standings(competition)
   # Display the standings as a table
   st.dataframe(
     data=standings,
@@ -30,10 +30,10 @@ def display_standings():
     use_container_width=True
   )
 
-def display_top_scorers():
+def display_top_scorers(competition):
   st.markdown("Top Scorers")
   # Get top scorers from bigquery
-  top_scorers = get_top_scorers()
+  top_scorers = get_top_scorers(competition)
   # Display the top scorers as a table
   st.dataframe(
     data=top_scorers,
@@ -49,8 +49,8 @@ def display_top_scorers():
     hide_index=True
   )
 
-def display_fixtures():
-  handle_fixture_display()
+def display_fixtures(competition):
+  handle_fixture_display(competition)
 
 def app():
   st.set_page_config(
@@ -67,14 +67,14 @@ def app():
 
   with tab1:
     # Display current standings
-    display_standings()
+    display_standings(league_name_constants.PREMIER_LEAGUE)
 
   with tab2:
     # Display current top scorers
-    display_top_scorers()
+    display_top_scorers(league_name_constants.PREMIER_LEAGUE)
   with tab3:
     # Display the fixtures matchday-wise
-    display_fixtures()
+    display_fixtures(league_name_constants.PREMIER_LEAGUE)
 
 if __name__=="__main__":
   app()

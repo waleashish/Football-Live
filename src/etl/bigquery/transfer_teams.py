@@ -8,8 +8,8 @@ from google.oauth2 import service_account
 from dotenv import load_dotenv
 
 
-def __fetch_api():
-    url = "http://api.football-data.org/v4/competitions/PL/teams"
+def __fetch_api(competition):
+    url = f"http://api.football-data.org/v4/competitions/{competition}/teams"
     payload = {}
     headers = {
       'X-Auth-Token': os.getenv(constants.FOOTBALL_API_KEY)
@@ -24,6 +24,7 @@ def __fetch_api():
     tlas_list = []
     crests_list = []
     homes_list = []
+    competition_codes_list = []
 
     for i in range(0, 20):
         teams_list.append(str(data["teams"][i]["name"]))
@@ -31,30 +32,34 @@ def __fetch_api():
         tlas_list.append(str(data["teams"][i]["tla"]))
         crests_list.append(str(data["teams"][i]["crest"]))
         homes_list.append(str(data["teams"][i]["venue"]))
+        competition_codes_list.append(str(data["competition"]["code"]))
     
     return (
         teams_list,
         short_name_list,
         tlas_list,
         crests_list,
-        homes_list
+        homes_list,
+        competition_codes_list
     )
 
-def __create_dataframe() -> DataFrame:
+def __create_dataframe(competition) -> DataFrame:
     (
         teams_list,
         short_name_list,
         tlas_list,
         crests_list,
-        homes_list
-    ) = __fetch_api()
+        homes_list,
+        competition_codes_list
+    ) = __fetch_api(competition)
 
     headers = [
         "name",
         "short_name",
         "tla",
         "crest",
-        "home"
+        "home",
+        "competition_code"
     ]
 
     data_zipped = zip(
@@ -62,7 +67,8 @@ def __create_dataframe() -> DataFrame:
         short_name_list,
         tlas_list,
         crests_list,
-        homes_list
+        homes_list,
+        competition_codes_list
     )
 
     df = DataFrame(data_zipped, columns=headers)
@@ -75,7 +81,8 @@ def __define_table_schema():
         {"name": "short_name", "type": "STRING"},
         {"name": "tla", "type": "STRING"},
         {"name": "crest", "type": "STRING"},
-        {"name": "home", "type": "STRING"}
+        {"name": "home", "type": "STRING"},
+        {"name": "competition_code", "type": "STRING"}
     ]
 
     return schema_definition
@@ -94,10 +101,10 @@ def __add_standings_data_to_bigquery(dataframe, schema) -> None:
         destination_table="footballapp.teams"
     )
 
-def start_pipeline():
+def start_pipeline(competition):
     load_dotenv(dotenv_path=constants.DOTENV_PATH)
     print(f"Starting ETL pipeline ...")
-    dataframe = __create_dataframe()
+    dataframe = __create_dataframe(competition)
     schema = __define_table_schema()
     print(f"Adding teams data to BigQuery ...")
     __add_standings_data_to_bigquery(dataframe, schema)

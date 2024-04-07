@@ -12,8 +12,8 @@ from pandas import DataFrame
 from google.oauth2 import service_account
 from dotenv import load_dotenv
 
-def __fetch_api():
-    url = "http://api.football-data.org/v4/competitions/PL/standings"
+def __fetch_api(competition):
+    url = f"http://api.football-data.org/v4/competitions/{competition}/standings"
     payload = {}
     headers = {
       'X-Auth-Token': os.getenv(constants.FOOTBALL_API_KEY)
@@ -58,7 +58,7 @@ def __fetch_api():
     )
 
 
-def __create_dataframe() -> DataFrame:
+def __create_dataframe(competition) -> DataFrame:
     print(f"Fetching Data from Football API ...")
     (
         positions,
@@ -71,7 +71,7 @@ def __create_dataframe() -> DataFrame:
         goal_difference_list,
         goals_for_list,
         goals_against_list
-    ) = __fetch_api()
+    ) = __fetch_api(competition)
 
     headers = [
         "position",
@@ -134,10 +134,10 @@ def __add_standings_data_to_bigquery(dataframe, schema) -> None:
     )
     
 
-def start_pipeline():
+def start_pipeline(competition):
     load_dotenv(dotenv_path=constants.DOTENV_PATH)
     print(f"Starting ETL pipeline ...")
-    dataframe = __create_dataframe()
+    dataframe = __create_dataframe(competition)
     schema = __define_table_schema()
     print(f"Adding standings data to BigQuery ...")
     __add_standings_data_to_bigquery(dataframe, schema)

@@ -8,8 +8,8 @@ from google.oauth2 import service_account
 from dotenv import load_dotenv
 
 
-def __fetch_api():
-    url = "http://api.football-data.org/v4/competitions/PL/scorers"
+def __fetch_api(competition):
+    url = f"http://api.football-data.org/v4/competitions/{competition}/scorers"
     payload = {}
     headers = {
       'X-Auth-Token': os.getenv(constants.FOOTBALL_API_KEY)
@@ -25,6 +25,7 @@ def __fetch_api():
     assists_list = []
     matches_played = []
     nationality_list = []
+    competition_codes_list = []
 
     for i in range(0, 10):
         names_list.append(str(data["scorers"][i]["player"]["name"]))
@@ -33,6 +34,7 @@ def __fetch_api():
         assists_list.append(int(data["scorers"][i]["assists"] or 0))
         matches_played.append(int(data["scorers"][i]["playedMatches"]))
         nationality_list.append(str(data["scorers"][i]["player"]["nationality"]))
+        competition_codes_list.append(str(data["competition"]["code"]))
     
     return (
         names_list,
@@ -40,18 +42,20 @@ def __fetch_api():
         goals_list,
         assists_list,
         matches_played,
-        nationality_list
+        nationality_list,
+        competition_codes_list
     )
 
-def __create_dataframe() -> DataFrame:
+def __create_dataframe(competition) -> DataFrame:
     (
         names_list,
         teams_list,
         goals_list,
         assists_list,
         matches_played,
-        nationality_list
-    ) = __fetch_api()
+        nationality_list,
+        competition_codes_list
+    ) = __fetch_api(competition)
 
     headers = [
         "name",
@@ -59,7 +63,8 @@ def __create_dataframe() -> DataFrame:
         "goals",
         "assists",
         "matches_played",
-        "nationality"
+        "nationality",
+        "competition_code"
     ]
 
     data_zipped = zip(
@@ -68,7 +73,8 @@ def __create_dataframe() -> DataFrame:
         goals_list,
         assists_list,
         matches_played,
-        nationality_list
+        nationality_list,
+        competition_codes_list
     )
 
     df = DataFrame(data_zipped, columns=headers)
@@ -83,6 +89,7 @@ def __define_table_schema():
         {"name": "assists", "type": "INTEGER"},
         {"name": "matches_played", "type": "INTEGER"},
         {"name": "nationality", "type": "STRING"},
+        {"name": "competition_code", "type": "STRING"}
     ]
 
     return schema_definition
@@ -101,10 +108,10 @@ def __add_top_scorers_data_to_bigquery(dataframe, schema) -> None:
         destination_table="footballapp.top_scorers"
     )
 
-def start_pipeline():
+def start_pipeline(competition):
     load_dotenv(dotenv_path=constants.DOTENV_PATH)
     print(f"Starting ETL pipeline ...")
-    dataframe = __create_dataframe()
+    dataframe = __create_dataframe(competition)
     schema = __define_table_schema()
     print(f"Adding top scorers data to BigQuery ...")
     __add_top_scorers_data_to_bigquery(dataframe, schema)

@@ -5,19 +5,13 @@ import src.utils.constants.constants as constants
 from pandas import DataFrame
 from google.oauth2 import service_account
 
-def __fetch_from_bq() -> DataFrame:
-    query = """
-                SELECT
-                name,
-                team,
-                goals,
-                assists,
-                matches_played,
-                nationality
+def __fetch_from_bq(competition) -> DataFrame:
+    query = f"""
+                SELECT name, team, goals, assists, matches_played, nationality, competition_code
                 FROM footballapp.top_scorers
-                ORDER BY goals DESC
-            """
-    
+                WHERE competition_code = '{competition}'
+                ORDER BY goals DESC"""
+
     credentials = service_account.Credentials.from_service_account_file(
         constants.CREDENTIALS_PATH
     )
@@ -29,5 +23,5 @@ def __fetch_from_bq() -> DataFrame:
         dialect="legacy"
     )
 
-def get_top_scorers() -> DataFrame:
-    return __fetch_from_bq()
+def get_top_scorers(competition) -> DataFrame:
+    return __fetch_from_bq(competition)

@@ -2,8 +2,8 @@ import streamlit as st
 import json
 from src.etl.bigquery.fixtures import get_all_fixtures
 
-def handle_fixture_display():
-    fixtures = get_all_fixtures()
+def handle_fixture_display(competition):
+    fixtures = get_all_fixtures(competition)
     matchdays = fixtures["one_matchday"].unique()
     for x in matchdays:
         with st.expander(f"Matchday {x}"):

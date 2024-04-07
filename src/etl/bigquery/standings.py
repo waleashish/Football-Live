@@ -11,8 +11,8 @@ from pandas import DataFrame
 import src.utils.constants.constants as constants
 from google.oauth2 import service_account
 
-def __fetch_from_bq() -> DataFrame:
-    query = """
+def __fetch_from_bq(competition) -> DataFrame:
+    query = f"""
                 SELECT 
                 position,
                 crest,
@@ -27,6 +27,7 @@ def __fetch_from_bq() -> DataFrame:
                 goals_against
                 FROM footballapp.standings as standings INNER JOIN footballapp.teams as teams
                 ON standings.team = teams.short_name
+                WHERE teams.competition_code = '{competition}'
                 ORDER BY position ASC
             """
     credentials = service_account.Credentials.from_service_account_file(
@@ -41,5 +42,5 @@ def __fetch_from_bq() -> DataFrame:
 
     return df
 
-def get_standings() -> DataFrame:
-    return __fetch_from_bq()
+def get_standings(competition) -> DataFrame:
+    return __fetch_from_bq(competition)

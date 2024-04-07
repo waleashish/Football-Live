@@ -4,7 +4,7 @@ import pandas_gbq
 from google.oauth2 import service_account
 from src.utils.constants import constants
 
-def __fetch_from_bq():
+def __fetch_from_bq(competition):
     query = f"""
                 SELECT * FROM 
                 (SELECT matchday, short_name AS home_team_name, crest, full_time_score, half_time_score, away_team
@@ -15,6 +15,7 @@ def __fetch_from_bq():
                 (SELECT matchday, short_name as away_team_name, crest
                 FROM footballapp.fixtures AS fix INNER JOIN footballapp.teams AS teams
                 ON fix.away_team = teams.short_name
+                WHERE teams.competition_code = '{competition}'
                 ORDER BY matchday DESC) AS two
                 ON one.matchday = two.matchday AND one.away_team = two.away_team_name;
             """
@@ -34,5 +35,5 @@ def __fetch_from_bq():
 
     return df
 
-def get_all_fixtures():
-    return __fetch_from_bq()
+def get_all_fixtures(competition):
+    return __fetch_from_bq(competition)

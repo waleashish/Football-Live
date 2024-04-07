@@ -7,8 +7,8 @@ from pandas import DataFrame
 from google.oauth2 import service_account
 from dotenv import load_dotenv
 
-def __fetch_api():
-    url = "http://api.football-data.org/v4/competitions/PL/matches"
+def __fetch_api(competition):
+    url = f"http://api.football-data.org/v4/competitions/{competition}/matches"
     payload = {}
     headers = {
         'X-Auth-Token': os.getenv(constants.FOOTBALL_API_KEY)
@@ -52,7 +52,7 @@ def __fetch_api():
     )
 
 
-def __create_dataframe() -> DataFrame:
+def __create_dataframe(competition) -> DataFrame:
     print(f"Fetching Data from Football API ...")
     (
         matchday_list,
@@ -61,7 +61,7 @@ def __create_dataframe() -> DataFrame:
         status_list,
         ft_scores_list,
         ht_scores_list
-    ) = __fetch_api()
+    ) = __fetch_api(competition)
 
     headers = [
         "matchday",
@@ -111,10 +111,10 @@ def __add_fixtures_data_to_bigquery(dataframe, schema) -> None:
         credentials=credentials
     )
 
-def start_pipeline():
+def start_pipeline(competition):
     load_dotenv(dotenv_path=constants.DOTENV_PATH)
     print(f"Starting ETL pipeline ...")
-    dataframe = __create_dataframe()
+    dataframe = __create_dataframe(competition)
     schema = __define_table_schema()
     print(f"Adding fixtures data to BigQuery ...")
     __add_fixtures_data_to_bigquery(dataframe, schema)
