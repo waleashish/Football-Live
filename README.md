@@ -13,5 +13,5 @@ docker build -t football-live .
 
 To run the application:
 ```shell
-docker run -p 8501:8501 football-live  
+docker run -p 8501:8501 -d football-live  
 ```
