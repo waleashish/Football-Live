@@ -101,12 +101,11 @@ def __add_standings_data_to_bigquery(dataframe, schema) -> None:
         destination_table="footballapp.teams"
     )
 
-def start_pipeline(competitions):
+def start_pipeline(competition):
     load_dotenv(dotenv_path=constants.DOTENV_PATH)
     print(f"Starting ETL pipeline ...")
-    for competition in competitions:
-        dataframe = __create_dataframe(competition)
-        schema = __define_table_schema()
-        print(f"Adding teams data to BigQuery ...")
-        __add_standings_data_to_bigquery(dataframe, schema)
+    dataframe = __create_dataframe(competition)
+    schema = __define_table_schema()
+    print(f"Adding teams data to BigQuery ...")
+    __add_standings_data_to_bigquery(dataframe, schema)
     print(f"Addition complete")

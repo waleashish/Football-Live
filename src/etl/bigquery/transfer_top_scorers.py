@@ -104,16 +104,15 @@ def __add_top_scorers_data_to_bigquery(dataframe, schema) -> None:
         credentials=credentials,
         project_id=os.getenv(constants.GCLOUD_PROJECT),
         table_schema=schema,
-        if_exists="append",
+        if_exists="replace",
         destination_table="footballapp.top_scorers"
     )
 
-def start_pipeline(competitions):
+def start_pipeline(competition):
     load_dotenv(dotenv_path=constants.DOTENV_PATH)
     print(f"Starting ETL pipeline ...")
-    for competition in competitions:
-        dataframe = __create_dataframe(competition)
-        schema = __define_table_schema()
-        print(f"Adding top scorers data to BigQuery ...")
-        __add_top_scorers_data_to_bigquery(dataframe, schema)
+    dataframe = __create_dataframe(competition)
+    schema = __define_table_schema()
+    print(f"Adding top scorers data to BigQuery ...")
+    __add_top_scorers_data_to_bigquery(dataframe, schema)
     print(f"Addition complete")

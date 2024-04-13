@@ -16,12 +16,16 @@ def __fetch_from_bq(competition) -> DataFrame:
         constants.CREDENTIALS_PATH
     )
 
-    return pandas_gbq.read_gbq(
+    df = pandas_gbq.read_gbq(
         query_or_table=query,
         project_id=os.getenv(constants.GCLOUD_PROJECT),
         credentials=credentials,
         dialect="legacy"
     )
+
+    df = df.drop(["competition_code"], axis=1)
+
+    return df
 
 def get_top_scorers(competition) -> DataFrame:
     return __fetch_from_bq(competition)
