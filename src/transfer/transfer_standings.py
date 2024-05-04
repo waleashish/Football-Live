@@ -2,7 +2,7 @@ import os
 
 import requests
 import psycopg2
-import src.utils.constants.constants as constants
+import time
 
 def __fetch_api(competition, team_count):
     url = f"http://api.football-data.org/v4/competitions/{competition}/standings"
@@ -35,7 +35,9 @@ def __fetch_api(competition, team_count):
     return standings_data
 
 def start_pipeline(competition, team_count):
+    print("Fetching data from API ...")
     standings_data = __fetch_api(competition, team_count)
+    print("Data fetched. Proceeding to create connection to Postgres ...")
     while True:
         try:
             conn = psycopg2.connect(
@@ -53,8 +55,10 @@ def start_pipeline(competition, team_count):
 
     cur = conn.cursor()
 
-    teams_seed_data = __fetch_api(competition, team_count)
-    teams_insert_query = """
+    # First we need to delete the old data
+    cur.execute(f"DELETE FROM standings WHERE league_id = {competition}")
+
+    standings_insert_query = """
                         INSERT INTO standings (
                             team_id, 
                             league_id, 
@@ -71,7 +75,7 @@ def start_pipeline(competition, team_count):
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         """
 
-    cur.executemany(teams_insert_query, teams_seed_data)
+    cur.executemany(standings_insert_query, standings_data)
 
     conn.commit()
     cur.close()
