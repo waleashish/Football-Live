@@ -7,6 +7,7 @@ RUN pip install python-dotenv
 RUN pip install pandas-gbq
 RUN pip install tqdm
 RUN pip install streamlit
+RUN pip install psycopg2-binary
 
 COPY ./src/ /app/src/
 COPY ./config/ /app/config/

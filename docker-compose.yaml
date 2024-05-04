@@ -21,6 +21,8 @@ services:
 
   streamlit-app:
     build: .
+    environment:
+      FOOTBALL_API_KEY: ${FOOTBALL_API_KEY}
     ports:
       - "8501:8501"
     depends_on:
