@@ -49,7 +49,7 @@ def start_pipeline(competition):
     cur = conn.cursor()
 
     # First we need to delete the old data
-    cur.execute(f"DELETE FROM top_scorers WHERE league_id = 2021")
+    cur.execute(f"DELETE FROM top_scorers WHERE league_id = {competition}")
 
     top_scorers_insert_query = """
                         INSERT INTO top_scorers (

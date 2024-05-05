@@ -12,8 +12,8 @@ services:
     ports:
       - "5432:5432"
 
-  populate-teams:
-    build: ./installation/populate_teams
+  populate-tables:
+    build: ./installation/populate_tables
     environment:
       FOOTBALL_API_KEY: ${FOOTBALL_API_KEY}
     depends_on:
