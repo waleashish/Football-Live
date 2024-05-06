@@ -12,10 +12,7 @@ def __fetch_teams_data(competition, team_count):
     response = requests.request("GET", url, headers=headers, data=payload)
     data = response.json()
 
-    print("Fetching complete")
-
     seed_data = []
-
     for i in range(0, team_count):
         seed_data.append(
             (
@@ -42,22 +39,22 @@ def __fetch_fixtures_data(competition):
     i = 0
 
     current_matchday = int(data["matches"][0]["season"]["currentMatchday"])
-    
-    while True:
+    fixtures_count = int(data["resultSet"]["count"])
+
+    while i < fixtures_count:
         matchday = int(data["matches"][i]["matchday"])
-        if matchday > current_matchday:
-            break
-        matches_data.append(
-            (
-                int(data["matches"][i]["id"]),
-                int(data["matches"][i]["homeTeam"]["id"]),
-                int(data["matches"][i]["awayTeam"]["id"]),
-                int(data["competition"]["id"]),
-                str(data["matches"][i]["status"]),
-                int(data["matches"][i]["score"]["fullTime"]["home"]) if data["matches"][i]["score"]["fullTime"]["home"] != None else None,
-                int(data["matches"][i]["score"]["fullTime"]["away"]) if data["matches"][i]["score"]["fullTime"]["away"] != None else None
+        if matchday < current_matchday:
+            matches_data.append(
+                (
+                    int(data["matches"][i]["id"]),
+                    int(data["matches"][i]["homeTeam"]["id"]),
+                    int(data["matches"][i]["awayTeam"]["id"]),
+                    int(data["competition"]["id"]),
+                    str(data["matches"][i]["status"]),
+                    int(data["matches"][i]["score"]["fullTime"]["home"]) if data["matches"][i]["score"]["fullTime"]["home"] != None else None,
+                    int(data["matches"][i]["score"]["fullTime"]["away"]) if data["matches"][i]["score"]["fullTime"]["away"] != None else None
+                )
             )
-        )
         i += 1
     
     return matches_data
