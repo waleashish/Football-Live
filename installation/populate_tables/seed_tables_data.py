@@ -86,6 +86,36 @@ def __fetch_top_scorers_data(competition):
     
     return top_scorers_data
 
+def __fetch_standings_data(competition, team_count):
+    url = f"http://api.football-data.org/v4/competitions/{competition}/standings"
+    payload = {}
+    headers = {
+      'X-Auth-Token': os.getenv("FOOTBALL_API_KEY")
+    }
+    response = requests.request("GET", url, headers=headers, data=payload)
+    data = response.json()
+
+    standings_data = []
+    for i in range(0, team_count):
+        standings_data.append(
+            (
+                int(data["standings"][0]["table"][i]["team"]["id"]),
+                int(data["competition"]["id"]),
+                int(data["standings"][0]["table"][i]["position"]),
+                int(data["standings"][0]["table"][i]["points"]),
+                int(data["standings"][0]["table"][i]["playedGames"]),
+                int(data["standings"][0]["table"][i]["won"]),
+                int(data["standings"][0]["table"][i]["draw"]),
+                int(data["standings"][0]["table"][i]["lost"]),
+                int(data["standings"][0]["table"][i]["goalsFor"]),
+                int(data["standings"][0]["table"][i]["goalsAgainst"]),
+                int(data["standings"][0]["table"][i]["goalDifference"])
+            )
+        )
+
+    return standings_data
+
+
 if __name__=="__main__":
     while True:
         try:
@@ -152,6 +182,32 @@ if __name__=="__main__":
         cur.executemany(top_scorers_insert_query, top_scorers_seed_data)
 
     print("Top scorers data seeded successfully.")
+
+    print("Waiting for 60 seconds before fetching standings data ...")
+    time.sleep(60)
+    print("Fetching standings data ...")
+
+    for (competition, team_count) in competition_codes:
+        standings_seed_data = __fetch_standings_data(competition, team_count)
+        standings_insert_query = """
+            INSERT INTO standings (
+                team_id,
+                league_id,
+                position,
+                points,
+                matches_played,
+                wins,
+                draws,
+                losses,
+                goals_for,
+                goals_against,
+                goal_difference
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        cur.executemany(standings_insert_query, standings_seed_data)
+
+    print("Standings data seeded successfully.")
     
     print("Seeding complete. Closing connection ...")
     conn.commit()

@@ -5,6 +5,7 @@ import psycopg2
 import time
 
 from src.utils.constants import constants, league_name_constants
+from src.utils.DBConnection import DBConnection
 
 def __fetch_api(competition):
     url = f"http://api.football-data.org/v4/competitions/{competition}/matches"
@@ -40,19 +41,8 @@ def __fetch_api(competition):
     return matches_data
 
 def start_pipeline():
-    while True:
-        try:
-            conn = psycopg2.connect(
-                dbname="football",
-                user="football",
-                password="football",
-                host="postgres-football"
-            )
-            break
-
-        except psycopg2.OperationalError:
-            time.sleep(1)
-
+    # Get connection to Postgres
+    conn = DBConnection().get_connection()
     print("Connection to Postgres established. Proceeding to add data ...")
     cur = conn.cursor()
 

@@ -8,22 +8,22 @@ from src.load import get_data
 def display_standings(competition):
   st.markdown("Current Standings")
   # Get standings from bigquery
-  standings = get_standings(competition)
+  standings = get_data.get_standings(constants.league_ids[competition])
   # Display the standings as a table
   st.dataframe(
     data=standings,
     column_config= {
-      "rank": "Rank",
+      "position": "Rank",
       "crest": st.column_config.ImageColumn("Icon", width="small"),
       "team": "Team",
-      "games_played": "Games Played",
+      "matches": "Matches",
       "wins": "Wins",
       "losses": "Losses",
       "draws": "Draws",
-      "points": "Points",
-      "goal_difference": "Goal Difference",
       "goals_for": "Goals For",
-      "goals_against": "Goals Against"
+      "goals_against": "Goals Against",
+      "goal_difference": "Goal Difference",
+      "points": "Points"
     },
     hide_index=True,
     use_container_width=True
