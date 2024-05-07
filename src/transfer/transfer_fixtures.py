@@ -1,8 +1,6 @@
 import os
 
 import requests
-import psycopg2
-import time
 
 from src.utils.constants import constants, league_name_constants
 from src.utils.DBConnection import DBConnection

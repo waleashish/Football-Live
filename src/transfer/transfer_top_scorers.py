@@ -1,8 +1,6 @@
 import os
 
 import requests
-import psycopg2
-import time
 
 from src.utils.constants import constants
 from src.utils.DBConnection import DBConnection

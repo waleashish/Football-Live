@@ -1,23 +1,8 @@
-import psycopg2
-import time
 from pandas import DataFrame
-
 from src.utils.DBConnection import DBConnection
 
 def get_top_scorers(league_id: int) -> DataFrame:
-    while True:
-        try:
-            conn = psycopg2.connect(
-                dbname="football",
-                user="football",
-                password="football",
-                host="postgres-football"
-            )
-            break
-
-        except psycopg2.OperationalError:
-            time.sleep(1)
-
+    conn = DBConnection().get_connection()
     cur = conn.cursor()
     exec_query = f"""
         SELECT
