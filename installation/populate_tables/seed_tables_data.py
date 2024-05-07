@@ -18,6 +18,7 @@ def __fetch_teams_data(competition, team_count):
             (
                 int(data["teams"][i]["id"]),
                 str(data["teams"][i]["name"]),
+                str(data["teams"][i]["tla"]),
                 str(data["teams"][i]["crest"]),
                 str(data["teams"][i]["venue"]),
                 str(data["competition"]["id"])
@@ -142,8 +143,8 @@ if __name__=="__main__":
         teams_seed_data = __fetch_teams_data(competition, team_count)
         teams_insert_query = """
             INSERT INTO teams 
-            (team_id, name, crest, venue, league_id) 
-            VALUES (%s, %s, %s, %s, %s)
+            (team_id, name, short_name, crest, venue, league_id) 
+            VALUES (%s, %s, %s, %s, %s, %s)
         """
         cur.executemany(teams_insert_query, teams_seed_data)
 

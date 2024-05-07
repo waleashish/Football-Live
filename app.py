@@ -1,6 +1,5 @@
 import streamlit as st
 
-from src.etl.bigquery.standings import get_standings
 from src.ui.fixtures import handle_fixture_display
 from src.utils.constants import constants
 from src.load import get_data
@@ -47,7 +46,7 @@ def display_top_scorers(competition):
   )
 
 def display_fixtures(competition):
-  handle_fixture_display(competition)
+  handle_fixture_display(constants.league_ids[competition])
 
 def app():
   st.set_page_config(

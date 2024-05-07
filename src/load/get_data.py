@@ -69,3 +69,42 @@ def get_standings(league_id: int) -> DataFrame:
     )
 
     return df
+
+def get_fixtures(league_id: int) -> DataFrame:
+    conn = DBConnection().get_connection()
+    cur = conn.cursor()
+    exec_query = f"""
+        SELECT
+            t1.crest AS home_crest,
+            t1.short_name AS home_team,
+            f.home_team_score AS home_score,
+            t2.crest AS away_crest,
+            t2.short_name AS away_team,
+            f.away_team_score AS away_score,
+            f.status,
+            f.matchday
+        FROM fixtures f
+        JOIN teams t1 ON f.home_team_id = t1.team_id
+        JOIN teams t2 ON f.away_team_id = t2.team_id
+        WHERE f.league_id = {league_id}
+        ORDER BY f.matchday DESC
+    """
+
+    cur.execute(exec_query)
+    fixtures = cur.fetchall()
+
+    df = DataFrame(
+        fixtures,
+        columns=[
+            "home_crest",
+            "home_team",
+            "home_score",
+            "away_crest",
+            "away_team",
+            "away_score",
+            "status",
+            "matchday"
+        ]
+    )
+
+    return df

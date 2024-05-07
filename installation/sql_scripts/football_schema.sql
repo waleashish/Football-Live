@@ -8,6 +8,7 @@ CREATE TABLE leagues (
 CREATE TABLE teams (
     team_id INT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    short_name VARCHAR(255) NOT NULL,
     crest VARCHAR(255) NOT NULL,
     venue VARCHAR(255) NOT NULL,
     league_id INTEGER REFERENCES leagues(league_id)
