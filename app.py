@@ -1,10 +1,9 @@
 import streamlit as st
 
 from src.etl.bigquery.standings import get_standings
-from src.etl.bigquery.top_scorers import get_top_scorers
 from src.ui.fixtures import handle_fixture_display
 from src.utils.constants import constants
-from dotenv import load_dotenv
+from src.load import get_data
 
 def display_standings(competition):
   st.markdown("Current Standings")
@@ -33,17 +32,15 @@ def display_standings(competition):
 def display_top_scorers(competition):
   st.markdown("Top Scorers")
   # Get top scorers from bigquery
-  top_scorers = get_top_scorers(competition)
+  top_scorers = get_data.get_top_scorers(constants.league_ids[competition])
   # Display the top scorers as a table
   st.dataframe(
     data=top_scorers,
     column_config={
-      "name": "Player",
-      "team": "Team",
+      "crest": st.column_config.ImageColumn("Icon", width="small"),
+      "name": "Name",
       "goals": "Goals",
-      "assists": "Assists",
-      "matches_played": "Matches Played",
-      "nationality": "Nationality"
+      "assists": "Assists"
     },
     use_container_width=True,
     hide_index=True
@@ -58,7 +55,6 @@ def app():
     layout="wide",
     initial_sidebar_state="auto",
   )
-  load_dotenv(dotenv_path=constants.DOTENV_PATH)
   # Display header
   st.header("Football Live")
 

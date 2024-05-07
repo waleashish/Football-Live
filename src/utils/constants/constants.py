@@ -17,3 +17,11 @@ TEAM_DROPDOWN_LIST = {
     "Bundesliga": league_name_constants.BUNDESLIGA,
     "Ligue 1": league_name_constants.LIGUE_1
 }
+
+league_ids = {
+    league_name_constants.PREMIER_LEAGUE: 2021,
+    league_name_constants.LA_LIGA: 2014,
+    league_name_constants.SERIE_A: 2019,
+    league_name_constants.BUNDESLIGA: 2002,
+    league_name_constants.LIGUE_1: 2015
+}

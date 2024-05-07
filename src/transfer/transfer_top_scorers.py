@@ -22,7 +22,7 @@ def __fetch_api(competition):
                 str(data["scorers"][i]["player"]["name"]),
                 int(data["scorers"][i]["team"]["id"]),
                 int(data["scorers"][i]["goals"]),
-                int(data["scorers"][i]["assists"]),
+                int(data["scorers"][i]["assists"]) if data["scorers"][i]["assists"] != None else 0,
                 int(data["competition"]["id"])
             )
         )

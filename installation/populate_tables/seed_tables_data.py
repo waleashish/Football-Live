@@ -59,6 +59,33 @@ def __fetch_fixtures_data(competition):
     
     return matches_data
 
+def __fetch_top_scorers_data(competition):
+    url = f"http://api.football-data.org/v4/competitions/{competition}/scorers"
+    payload = {}
+    headers = {
+      'X-Auth-Token': os.getenv("FOOTBALL_API_KEY")
+    }
+    response = requests.request("GET", url, headers=headers, data=payload)
+    data = response.json()
+
+    top_scorers_data = []
+    i = 0
+
+    while i < data["count"]:
+        top_scorers_data.append(
+            (
+                int(data["scorers"][i]["player"]["id"]),
+                str(data["scorers"][i]["player"]["name"]),
+                int(data["scorers"][i]["team"]["id"]),
+                int(data["scorers"][i]["goals"]),
+                int(data["scorers"][i]["assists"]) if data["scorers"][i]["assists"] != None else 0,
+                int(data["competition"]["id"])
+            )
+        )
+        i += 1
+    
+    return top_scorers_data
+
 if __name__=="__main__":
     while True:
         try:
@@ -104,6 +131,27 @@ if __name__=="__main__":
         cur.executemany(fixtures_insert_query, fixtures_seed_data)
 
     print("Fixtures data seeded successfully.")
+
+    print("Waiting for 60 seconds before fetching top scorers data ...")
+    time.sleep(60)
+    print("Fetching top scorers data ...")
+
+    for (competition, _) in competition_codes:
+        top_scorers_seed_data = __fetch_top_scorers_data(competition)
+        top_scorers_insert_query = """
+                        INSERT INTO top_scorers (
+                            player_id, 
+                            player_name, 
+                            team_id, 
+                            goals,
+                            assists,
+                            league_id
+                        ) 
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                        """
+        cur.executemany(top_scorers_insert_query, top_scorers_seed_data)
+
+    print("Top scorers data seeded successfully.")
     
     print("Seeding complete. Closing connection ...")
     conn.commit()

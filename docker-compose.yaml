@@ -14,6 +14,7 @@ services:
 
   populate-tables:
     build: ./installation/populate_tables
+    image: image-populate-tables
     environment:
       FOOTBALL_API_KEY: ${FOOTBALL_API_KEY}
     depends_on:
@@ -21,8 +22,10 @@ services:
 
   streamlit-app:
     build: .
+    image: image-streamlit-app
     environment:
       FOOTBALL_API_KEY: ${FOOTBALL_API_KEY}
+      GCLOUD_PROJECT: ${GCLOUD_PROJECT}
     ports:
       - "8501:8501"
     depends_on:
