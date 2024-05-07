@@ -45,5 +45,6 @@ CREATE TABLE fixtures (
     league_id INTEGER REFERENCES leagues(league_id),
     status VARCHAR(255) NOT NULL,
     home_team_score INTEGER,
-    away_team_score INTEGER
+    away_team_score INTEGER,
+    matchday INTEGER NOT NULL
 );

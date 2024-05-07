@@ -52,7 +52,8 @@ def __fetch_fixtures_data(competition):
                     int(data["competition"]["id"]),
                     str(data["matches"][i]["status"]),
                     int(data["matches"][i]["score"]["fullTime"]["home"]) if data["matches"][i]["score"]["fullTime"]["home"] != None else None,
-                    int(data["matches"][i]["score"]["fullTime"]["away"]) if data["matches"][i]["score"]["fullTime"]["away"] != None else None
+                    int(data["matches"][i]["score"]["fullTime"]["away"]) if data["matches"][i]["score"]["fullTime"]["away"] != None else None,
+                    int(data["matches"][i]["matchday"])
                 )
             )
         i += 1
@@ -128,6 +129,7 @@ if __name__=="__main__":
             break
 
         except psycopg2.OperationalError:
+            print("Connection to Postgres failed. Retrying in 1 second ...")
             time.sleep(1)
 
     print("Connection to Postgres established. Proceeding with seeding data ...")
@@ -154,9 +156,17 @@ if __name__=="__main__":
     for (competition, _) in competition_codes:
         fixtures_seed_data = __fetch_fixtures_data(competition)
         fixtures_insert_query = """
-            INSERT INTO fixtures 
-            (fixture_id, home_team_id, away_team_id, league_id, status, home_team_score, away_team_score) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO fixtures (
+                fixture_id,
+                home_team_id,
+                away_team_id,
+                league_id,
+                status,
+                home_team_score,
+                away_team_score,
+                matchday
+            ) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
         cur.executemany(fixtures_insert_query, fixtures_seed_data)
 

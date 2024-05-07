@@ -31,7 +31,8 @@ def __fetch_api(competition):
                     int(data["competition"]["id"]),
                     str(data["matches"][i]["status"]),
                     int(data["matches"][i]["score"]["fullTime"]["home"]) if data["matches"][i]["score"]["fullTime"]["home"] != None else None,
-                    int(data["matches"][i]["score"]["fullTime"]["away"]) if data["matches"][i]["score"]["fullTime"]["away"] != None else None
+                    int(data["matches"][i]["score"]["fullTime"]["away"]) if data["matches"][i]["score"]["fullTime"]["away"] != None else None,
+                    int(data["matches"][i]["matchday"])
                 )
             )
         i += 1
@@ -56,9 +57,10 @@ def start_pipeline():
                                 league_id,
                                 status,
                                 home_team_score,
-                                away_team_score
+                                away_team_score,
+                                matchday
                             ) 
-                            VALUES (%s, %s, %s, %s, %s, %s, %s)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                             ON CONFLICT (fixture_id)
                             DO UPDATE SET
                                 status = EXCLUDED.status,
