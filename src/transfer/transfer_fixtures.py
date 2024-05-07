@@ -4,13 +4,13 @@ import requests
 import psycopg2
 import time
 
-from src.utils.constants import league_name_constants
+from src.utils.constants import constants, league_name_constants
 
 def __fetch_api(competition):
     url = f"http://api.football-data.org/v4/competitions/{competition}/matches"
     payload = {}
     headers = {
-      'X-Auth-Token': os.getenv("FOOTBALL_API_KEY")
+      'X-Auth-Token': os.getenv(constants.FOOTBALL_API_KEY)
     }
     response = requests.request("GET", url, headers=headers, data=payload)
     data = response.json()
@@ -60,7 +60,7 @@ def start_pipeline():
 
         matches_data = __fetch_api(competition)
 
-        matches_insert_query = """
+        matches_upsert_query = """
                             INSERT INTO fixtures (
                                 fixture_id,
                                 home_team_id,
@@ -71,9 +71,14 @@ def start_pipeline():
                                 away_team_score
                             ) 
                             VALUES (%s, %s, %s, %s, %s, %s, %s)
+                            ON CONFLICT (fixture_id)
+                            DO UPDATE SET
+                                status = EXCLUDED.status,
+                                home_team_score = EXCLUDED.home_team_score,
+                                away_team_score = EXCLUDED.away_team_score
                             """
 
-        cur.executemany(matches_insert_query, matches_data)
+        cur.executemany(matches_upsert_query, matches_data)
 
     conn.commit()
     cur.close()

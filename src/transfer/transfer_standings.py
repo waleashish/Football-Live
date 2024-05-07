@@ -4,11 +4,13 @@ import requests
 import psycopg2
 import time
 
+from src.utils.constants import constants
+
 def __fetch_api(competition, team_count):
     url = f"http://api.football-data.org/v4/competitions/{competition}/standings"
     payload = {}
     headers = {
-      'X-Auth-Token': os.getenv("FOOTBALL_API_KEY")
+      'X-Auth-Token': os.getenv(constants.FOOTBALL_API_KEY)
     }
     response = requests.request("GET", url, headers=headers, data=payload)
     data = response.json()

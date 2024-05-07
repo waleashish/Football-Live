@@ -43,7 +43,7 @@ def __fetch_fixtures_data(competition):
 
     while i < fixtures_count:
         matchday = int(data["matches"][i]["matchday"])
-        if matchday < current_matchday:
+        if matchday <= current_matchday:
             matches_data.append(
                 (
                     int(data["matches"][i]["id"]),
