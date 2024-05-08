@@ -1,16 +1,15 @@
 import os
 
 import requests
-import psycopg2
-import time
 
-from src.utils.constants import league_name_constants
+from src.utils.constants import constants, league_name_constants
+from src.utils.DBConnection import DBConnection
 
 def __fetch_api(competition):
     url = f"http://api.football-data.org/v4/competitions/{competition}/matches"
     payload = {}
     headers = {
-      'X-Auth-Token': os.getenv("FOOTBALL_API_KEY")
+      'X-Auth-Token': os.getenv(constants.FOOTBALL_API_KEY)
     }
     response = requests.request("GET", url, headers=headers, data=payload)
     data = response.json()
@@ -32,7 +31,8 @@ def __fetch_api(competition):
                     int(data["competition"]["id"]),
                     str(data["matches"][i]["status"]),
                     int(data["matches"][i]["score"]["fullTime"]["home"]) if data["matches"][i]["score"]["fullTime"]["home"] != None else None,
-                    int(data["matches"][i]["score"]["fullTime"]["away"]) if data["matches"][i]["score"]["fullTime"]["away"] != None else None
+                    int(data["matches"][i]["score"]["fullTime"]["away"]) if data["matches"][i]["score"]["fullTime"]["away"] != None else None,
+                    int(data["matches"][i]["matchday"])
                 )
             )
         i += 1
@@ -40,19 +40,8 @@ def __fetch_api(competition):
     return matches_data
 
 def start_pipeline():
-    while True:
-        try:
-            conn = psycopg2.connect(
-                dbname="football",
-                user="football",
-                password="football",
-                host="postgres-football"
-            )
-            break
-
-        except psycopg2.OperationalError:
-            time.sleep(1)
-
+    # Get connection to Postgres
+    conn = DBConnection().get_connection()
     print("Connection to Postgres established. Proceeding to add data ...")
     cur = conn.cursor()
 
@@ -60,7 +49,7 @@ def start_pipeline():
 
         matches_data = __fetch_api(competition)
 
-        matches_insert_query = """
+        matches_upsert_query = """
                             INSERT INTO fixtures (
                                 fixture_id,
                                 home_team_id,
@@ -68,13 +57,18 @@ def start_pipeline():
                                 league_id,
                                 status,
                                 home_team_score,
-                                away_team_score
+                                away_team_score,
+                                matchday
                             ) 
-                            VALUES (%s, %s, %s, %s, %s, %s, %s)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                            ON CONFLICT (fixture_id)
+                            DO UPDATE SET
+                                status = EXCLUDED.status,
+                                home_team_score = EXCLUDED.home_team_score,
+                                away_team_score = EXCLUDED.away_team_score
                             """
 
-        cur.executemany(matches_insert_query, matches_data)
+        cur.executemany(matches_upsert_query, matches_data)
 
     conn.commit()
     cur.close()
-    conn.close()

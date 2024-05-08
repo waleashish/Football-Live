@@ -1,14 +1,15 @@
 import os
 
 import requests
-import psycopg2
-import time
+
+from src.utils.constants import constants
+from src.utils.DBConnection import DBConnection
 
 def __fetch_api(competition, team_count):
     url = f"http://api.football-data.org/v4/competitions/{competition}/standings"
     payload = {}
     headers = {
-      'X-Auth-Token': os.getenv("FOOTBALL_API_KEY")
+      'X-Auth-Token': os.getenv(constants.FOOTBALL_API_KEY)
     }
     response = requests.request("GET", url, headers=headers, data=payload)
     data = response.json()
@@ -38,18 +39,8 @@ def start_pipeline(competition, team_count):
     print("Fetching data from API ...")
     standings_data = __fetch_api(competition, team_count)
     print("Data fetched. Proceeding to create connection to Postgres ...")
-    while True:
-        try:
-            conn = psycopg2.connect(
-                dbname="football",
-                user="football",
-                password="football",
-                host="postgres-football"
-            )
-            break
 
-        except psycopg2.OperationalError:
-            time.sleep(1)
+    conn = DBConnection().get_connection()
 
     print("Connection to Postgres established. Proceeding to add data ...")
 
@@ -79,4 +70,3 @@ def start_pipeline(competition, team_count):
 
     conn.commit()
     cur.close()
-    conn.close()

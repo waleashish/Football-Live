@@ -23,6 +23,7 @@ services:
     build: .
     environment:
       FOOTBALL_API_KEY: ${FOOTBALL_API_KEY}
+      GCLOUD_PROJECT: ${GCLOUD_PROJECT}
     ports:
       - "8501:8501"
     depends_on:
