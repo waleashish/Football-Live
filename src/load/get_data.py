@@ -1,3 +1,4 @@
+import pandas as pd
 from pandas import DataFrame
 from src.utils.DBConnection import DBConnection
 
@@ -106,5 +107,12 @@ def get_fixtures(league_id: int) -> DataFrame:
             "matchday"
         ]
     )
+
+    df['home_score'] = df['home_score'].apply(lambda x: x if pd.notnull(x) else "-")
+    df['away_score'] = df['away_score'].apply(lambda x: x if pd.notnull(x) else "-")
+
+    df["home_score"] = df["home_score"].apply(lambda x: int(x) if x != "-" else x)
+    df["away_score"] = df["away_score"].apply(lambda x: int(x) if x != "-" else x)
+
 
     return df
