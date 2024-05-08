@@ -18,6 +18,9 @@ def get_top_scorers(league_id: int) -> DataFrame:
     cur.execute(exec_query)
     top_scorers = cur.fetchall()
 
+    # close the cursor
+    cur.close()
+
     # Create a DataFrame from the data and return it but ommit the league_id column
     df = DataFrame(
         top_scorers,
@@ -51,6 +54,9 @@ def get_standings(league_id: int) -> DataFrame:
     cur.execute(exec_query)
     standings = cur.fetchall()
 
+    # close the cursor
+    cur.close()
+
     # Create a DataFrame from the data and return it
     df = DataFrame(
         standings,
@@ -68,6 +74,7 @@ def get_standings(league_id: int) -> DataFrame:
             "points"
         ]
     )
+
 
     return df
 
@@ -93,6 +100,9 @@ def get_fixtures(league_id: int) -> DataFrame:
 
     cur.execute(exec_query)
     fixtures = cur.fetchall()
+
+    # close the cursor
+    cur.close()
 
     df = DataFrame(
         fixtures,

@@ -70,4 +70,3 @@ def start_pipeline(competition, team_count):
 
     conn.commit()
     cur.close()
-    conn.close()

@@ -56,4 +56,3 @@ def start_pipeline(competition):
 
     conn.commit()
     cur.close()
-    conn.close()

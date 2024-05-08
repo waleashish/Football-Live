@@ -72,4 +72,3 @@ def start_pipeline():
 
     conn.commit()
     cur.close()
-    conn.close()
