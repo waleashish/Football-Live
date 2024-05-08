@@ -4,14 +4,26 @@ Live football updates application
 ## Streamlit in docker
 Prerequisites:
 
-Add files named `.env` and `credentials.json` at /config/ directory. The files contain authorization information needed to run streamlit. Please take a look at sample files provided at the mentioned location.
+Add a `.env` in the root directory where `docker-compose.yaml` is located. The `.env` file contains authorization information needed to connect to postgres database and football-org api. Please take a look at sample file provided at the mentioned location.
 
-To build the application:
+To install the application:
+
 ```shell
-docker build -t football-live .
+sh install.sh
 ```
 
-To run the application:
+This will create the necessary containers (postgres, table population, etc.) and seed initial data
+into the application.
+
+To run the application server:
 ```shell
-docker run -p 8501:8501 -d football-live  
+sh startup.sh
+```
+
+This will start the streamlit application at [http://0.0.0.0:8501](http://0.0.0.0:8501)
+
+
+To stop the application server:
+```shell
+sh stopserver.sh
 ```
