@@ -1,8 +1,10 @@
+import atexit
 import streamlit as st
 
 from src.ui.fixtures import handle_fixture_display
 from src.utils.constants import constants
 from src.load import get_data
+from src.utils.DBConnection import DBConnection
 
 def display_standings(competition):
   st.markdown("Current Standings")
@@ -49,6 +51,11 @@ def display_fixtures(competition):
   handle_fixture_display(constants.league_ids[competition])
 
 def app():
+  # Create DB connection
+  db_connection = DBConnection()
+  atexit.register(db_connection.close_connection)
+
+  # Set page config
   st.set_page_config(
     page_title="Football Live",
     layout="wide",
@@ -71,7 +78,6 @@ def render_app(option):
     with tab1:
       # Display current standings
       display_standings(constants.TEAM_DROPDOWN_LIST[option])
-
     with tab2:
       # Display current top scorers
       display_top_scorers(constants.TEAM_DROPDOWN_LIST[option])

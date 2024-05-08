@@ -29,3 +29,8 @@ class DBConnection(metaclass=SingletonMeta):
 
     def get_connection(self):
         return self.connection
+    
+    def close_connection(self):
+        if self.connection is not None:
+            self.connection.close()
+            self.connection = None
